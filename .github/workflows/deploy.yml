@@ -1,4 +1,4 @@
-name: Deploy Content
+name: Deploy Scholarly Hub to Pages
 
 on:
   push:
@@ -26,9 +26,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # This "." means "The whole repo"
-          # If your files are in a folder named 'app', change this to './app'
-          path: '.' 
+          # Corrected path with the hyphen
+          path: './scholarly-hub'
 
       - name: Deploy to GitHub Pages
         id: deployment
