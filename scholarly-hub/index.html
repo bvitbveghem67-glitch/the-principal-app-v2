@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>8-BIT | Procedural Reader</title>
+    <style>
+        body { background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 30px; text-transform: uppercase; }
+        #terminal { border: 1px solid #0f0; padding: 20px; height: 500px; overflow-y: auto; background: #050505; line-height: 1.5; }
+        .input-line { display: flex; margin-top: 15px; border-top: 1px solid #111; padding-top: 10px; }
+        input { background: none; border: none; color: #fff; flex: 1; outline: none; font-family: inherit; font-size: 1.1rem; }
+        .bot { color: #0f0; font-weight: bold; }
+        .res { color: #ccc; margin-bottom: 10px; border-left: 2px solid #0f0; padding-left: 10px; }
+        .system-msg { color: #ffff00; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div id="terminal">
+    <div>8-BIT PROCEDURAL ENGINE [v3.5]</div>
+    <div class="system-msg">--- SYSTEM LOCKED // ENCRYPTION ACTIVE ---</div>
+    <div id="logs"></div>
+    <div class="input-line">
+        <span class="bot" id="prompt">ACCESS KEY > </span>
+        <input type="password" id="userInput" placeholder="..." autofocus autocomplete="off">
+    </div>
+</div>
+
+<script>
+    const logs = document.getElementById('logs');
+    const input = document.getElementById('userInput');
+    const prompt = document.getElementById('prompt');
+    
+    let USER_KEY = ""; 
+
+    // INITIAL MESSAGE
+    print("ESTABLISH UPLINK BY ENTERING CLEARANCE CODE.");
+
+    input.addEventListener('keypress', async (e) => {
+        if (e.key === 'Enter') {
+            const val = input.value.trim();
+            input.value = '';
+
+            // PHASE 1: LOGIN
+            if (!USER_KEY) {
+                if (val.length < 1) return;
+                USER_KEY = val;
+                prompt.innerText = "8-BIT > ";
+                input.type = "text"; // Switch from password to text
+                input.placeholder = "ENTER COMMAND...";
+                print(`<span class="system-msg">[!] KEY SET. ATTEMPTING HANDSHAKE...</span>`);
+                return;
+            }
+
+            // PHASE 2: COMMAND MODE
+            await startScrape(val);
+        }
+    });
+
+    async function startScrape(query) {
+        print(`> EXECUTING: ${query.toUpperCase()}`);
+        
+        try {
+            const response = await fetch(`/.netlify/functions/ask?q=${encodeURIComponent(query)}&key=${USER_KEY}`);
+            
+            if (response.status === 401) {
+                print(`<span style="color:red">[!] ACCESS DENIED: INVALID KEY. RESETTING...</span>`);
+                USER_KEY = "";
+                prompt.innerText = "ACCESS KEY > ";
+                input.type = "password";
+                return;
+            }
+
+            const data = await response.json();
+            print(`<span class="bot">[8-BIT READOUT]:</span>`);
+            print(`<div class="res">${data.answer}</div>`);
+            
+        } catch (err) {
+            print(`[!] ERROR: UPLINK FAILED. CHECK BRAIN STATUS.`);
+        }
+    }
+
+    function print(msg) {
+        const div = document.createElement('div');
+        div.innerHTML = msg;
+        logs.appendChild(div);
+        const terminal = document.getElementById('terminal');
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+</script>
+</body>
+</html>
+
