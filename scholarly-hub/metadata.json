@@ -1,0 +1,8 @@
+{
+  "name": "Scholarly - Online School Hub",
+  "description": "A high-performance, lightweight academic hub for schools with zero accounts and instant password-based access.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
